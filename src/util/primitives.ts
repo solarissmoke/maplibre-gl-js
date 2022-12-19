@@ -82,7 +82,7 @@ class Aabb {
 
     // Performs a frustum-aabb intersection test. Returns 0 if there's no intersection,
     // 1 if shapes are intersecting and 2 if the aabb if fully inside the frustum.
-    intersects(frustum: Frustum): number {
+    intersects(frustum: Frustum, fudge: number = 0): number {
         // Execute separating axis test between two convex objects to find intersections
         // Each frustum plane together with 3 major axes define the separating axes
 
@@ -104,7 +104,7 @@ class Aabb {
             let pointsInside = 0;
 
             for (let i = 0; i < aabbPoints.length; i++) {
-                if (vec4.dot(plane, aabbPoints[i] as any) >= 0) {
+                if (vec4.dot(plane, aabbPoints[i] as any) >= -fudge) {
                     pointsInside++;
                 }
             }
