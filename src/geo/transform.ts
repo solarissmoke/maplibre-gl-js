@@ -432,8 +432,9 @@ class Transform {
                   // to work around what I suspect to be floating point errors causing incorrect
                   // calculation of intersection, we pad each in-view tile with its 9-neighbours
                   console.log('Applying workaround for z > 24', it.zoom, maxZoom);
-                  for (let ndx = -1; ndx < 2; ++ndx) {
-                    for (let ndy = -1; ndy < 2; ++ndy) {
+                  const buffer = 3;
+                  for (let ndx = -buffer; ndx <= buffer; ++ndx) {
+                    for (let ndy = -buffer; ndy <= buffer; ++ndy) {
                       const nx = x + ndx;
                       const ny = y + ndy;
 
