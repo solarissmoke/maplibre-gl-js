@@ -13,8 +13,8 @@ export class CanonicalTileID {
 
     constructor(z: number, x: number, y: number) {
 
-        if (z < 0 || z > 25 || y < 0 || y >= Math.pow(2, z) || x < 0 || x >= Math.pow(2, z)) {
-            throw new Error(`x=${x}, y=${y}, z=${z} outside of bounds. 0<=x<${Math.pow(2, z)}, 0<=y<${Math.pow(2, z)} 0<=z<=25 `);
+        if (z < 0 || z > 32 || y < 0 || y >= Math.pow(2, z) || x < 0 || x >= Math.pow(2, z)) {
+            throw new Error(`x=${x}, y=${y}, z=${z} outside of bounds. 0<=x<${Math.pow(2, z)}, 0<=y<${Math.pow(2, z)} 0<=z<=32 `);
         }
 
         this.z = z;

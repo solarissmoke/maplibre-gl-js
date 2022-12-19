@@ -418,7 +418,6 @@ class Transform {
             // we can define distance thresholds for each relative level:
             // f(k) = offset + 2 + 4 + 8 + 16 + ... + 2^k. This is the same as "offset+2^(k+1)-2"
             const distToSplit = radiusOfMaxLvlLodInTiles + (1 << (maxZoom - it.zoom)) - 2;
-
             // Have we reached the target depth or is the tile too far away to be any split further?
             if (it.zoom === maxZoom || (longestDim > distToSplit && it.zoom >= minZoom)) {
                 const dz = maxZoom - it.zoom, dx = cameraPoint[0] - 0.5 - (x << dz), dy = cameraPoint[1] - 0.5 - (y << dz);
@@ -428,6 +427,31 @@ class Transform {
                     // this variable is currently not used, but may be important to reduce the amount of loaded tiles
                     tileDistanceToCamera: Math.sqrt(dx * dx + dy * dy)
                 });
+
+                if (it.zoom > 24) {
+                  // to work around what I suspect to be floating point errors causing incorrect
+                  // calculation of intersection, we pad each in-view tile with its 9-neighbours
+                  console.log('Applying workaround for z > 24', it.zoom, maxZoom);
+                  for (let ndx = -1; ndx < 2; ++ndx) {
+                    for (let ndy = -1; ndy < 2; ++ndy) {
+                      const nx = x + ndx;
+                      const ny = y + ndy;
+
+                      if (nx == x && ny == y) {
+                        continue;
+                      }
+
+                      const dz = maxZoom - it.zoom, dx = cameraPoint[0] - 0.5 - (nx << dz), dy = cameraPoint[1] - 0.5 - (ny << dz);
+                      result.push({
+                          tileID: new OverscaledTileID(it.zoom === maxZoom ? overscaledZ : it.zoom, it.wrap, it.zoom, nx, ny),
+                          distanceSq: vec2.sqrLen([centerPoint[0] - 0.5 - nx, centerPoint[1] - 0.5 - y]),
+                          // this variable is currently not used, but may be important to reduce the amount of loaded tiles
+                          tileDistanceToCamera: Math.sqrt(dx * dx + dy * dy)
+                      });
+                    }
+                  }
+                }
+
                 continue;
             }
 
